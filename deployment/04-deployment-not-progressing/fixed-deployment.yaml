@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-not-progressing
+  labels:
+    app: not-progressing-demo
+    troubleshooting: deployment
+spec:
+  replicas: 2
+  progressDeadlineSeconds: 600
+  selector:
+    matchLabels:
+      app: not-progressing-demo
+  template:
+    metadata:
+      labels:
+        app: not-progressing-demo
+    spec:
+      containers:
+      - name: web
+        image: nginx:1.25-alpine
+        ports:
+        - containerPort: 80

@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-api-reader
+  labels:
+    app: api-reader-demo
+    troubleshooting: production
+spec:
+  # Flawed: Uses default ServiceAccount which has zero cluster permissions in modern Kubernetes
+  containers:
+  - name: client
+    image: curlimages/curl:8.6.0
+    command:
+    - sh
+    - -c
+    - |
+      echo "Querying Kubernetes API for Pods..."
+      TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+      curl -s -k -H "Authorization: Bearer $TOKEN" https://kubernetes.default.svc/api/v1/namespaces/default/pods
+      sleep 3600

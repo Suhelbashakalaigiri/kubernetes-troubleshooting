@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-health-check-error
+  labels:
+    app: health-check-demo
+    troubleshooting: config
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: health-check-demo
+  template:
+    metadata:
+      labels:
+        app: health-check-demo
+    spec:
+      containers:
+      - name: web
+        image: nginx:1.25-alpine
+        ports:
+        - containerPort: 80
+        # Flawed configuration: Liveness probe checks an external/non-existent endpoint with aggressive 1s timeout
+        livenessProbe:
+          httpGet:
+            path: /deep-database-check
+            port: 80
+          initialDelaySeconds: 2
+          periodSeconds: 2
+          failureThreshold: 2
+          timeoutSeconds: 1

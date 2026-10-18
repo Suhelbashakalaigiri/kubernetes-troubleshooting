@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-secure-db
+  labels:
+    app: secure-db
+    troubleshooting: networking
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: secure-db
+  template:
+    metadata:
+      labels:
+        app: secure-db
+    spec:
+      containers:
+      - name: db
+        image: nginx:1.25-alpine
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-secure-db
+  labels:
+    troubleshooting: networking
+spec:
+  type: ClusterIP
+  selector:
+    app: secure-db
+  ports:
+  - port: 80
+    targetPort: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: block-all-ingress-db
+  labels:
+    troubleshooting: networking
+spec:
+  podSelector:
+    matchLabels:
+      app: secure-db
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          role: frontend
+    ports:
+    - protocol: TCP
+      port: 80

@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-anti-affinity
+  labels:
+    app: anti-affinity-demo
+    troubleshooting: production
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: anti-affinity-demo
+  template:
+    metadata:
+      labels:
+        app: anti-affinity-demo
+    spec:
+      # Best Practice: Soft anti-affinity prefers spreading, but allows co-location if nodes are limited
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - anti-affinity-demo
+              topologyKey: "kubernetes.io/hostname"
+      containers:
+      - name: web
+        image: nginx:1.25-alpine
+        ports:
+        - containerPort: 80

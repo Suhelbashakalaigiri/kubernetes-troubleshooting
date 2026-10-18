@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-not-progressing
+  labels:
+    app: not-progressing-demo
+    troubleshooting: deployment
+spec:
+  replicas: 2
+  progressDeadlineSeconds: 30
+  selector:
+    matchLabels:
+      app: not-progressing-demo
+  template:
+    metadata:
+      labels:
+        app: not-progressing-demo
+    spec:
+      containers:
+      - name: web
+        image: busybox:1.36
+        command: ["sh", "-c", "echo 'Failing startup task...'; exit 1"]

@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-failed-rollout
+  labels:
+    app: failed-rollout-demo
+    troubleshooting: deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: failed-rollout-demo
+  template:
+    metadata:
+      labels:
+        app: failed-rollout-demo
+    spec:
+      containers:
+      - name: web
+        image: nginx:1.25-alpine
+        ports:
+        - containerPort: 80

@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-secret-error
+  labels:
+    app: secret-demo
+    troubleshooting: config
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: secret-demo
+  template:
+    metadata:
+      labels:
+        app: secret-demo
+    spec:
+      containers:
+      - name: app
+        image: busybox:1.36
+        command: ["sh", "-c", "echo Application loaded secret: $API_TOKEN; sleep 3600"]
+        env:
+        - name: API_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: api_token

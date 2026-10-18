@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-version-incompatibility
+  labels:
+    app: version-demo
+    troubleshooting: config
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: version-demo
+  template:
+    metadata:
+      labels:
+        app: version-demo
+    spec:
+      containers:
+      - name: app
+        image: busybox:1.36
+        # Demonstrates passing an obsolete/unsupported flag: busybox httpd does not support --enable-ssl-v3
+        command: ["httpd", "-f", "--enable-ssl-v3"]

@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  labels:
+    troubleshooting: config
+data:
+  DB_HOST: "postgres://db.internal:5432/production"

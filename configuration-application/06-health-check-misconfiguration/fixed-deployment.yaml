@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-health-check-error
+  labels:
+    app: health-check-demo
+    troubleshooting: config
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: health-check-demo
+  template:
+    metadata:
+      labels:
+        app: health-check-demo
+    spec:
+      containers:
+      - name: web
+        image: nginx:1.25-alpine
+        ports:
+        - containerPort: 80
+        # Best Practice: Liveness probe checks strictly local container health
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          failureThreshold: 3
+          timeoutSeconds: 2

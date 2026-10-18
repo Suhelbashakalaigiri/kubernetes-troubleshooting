@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-auth-backend
+  labels:
+    app: auth-backend
+    troubleshooting: networking
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-backend
+  template:
+    metadata:
+      labels:
+        app: auth-backend
+    spec:
+      containers:
+      - name: auth
+        image: nginx:1.25-alpine
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-service
+  labels:
+    troubleshooting: networking
+spec:
+  type: ClusterIP
+  selector:
+    app: auth-backend
+  ports:
+  - port: 80
+    targetPort: 80
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dns-test-client
+  labels:
+    app: dns-client
+    troubleshooting: networking
+spec:
+  containers:
+  - name: client
+    image: busybox:1.36
+    command: ["sh", "-c", "while true; do nslookup auth-service.production.svc.cluster.local; sleep 10; done"]

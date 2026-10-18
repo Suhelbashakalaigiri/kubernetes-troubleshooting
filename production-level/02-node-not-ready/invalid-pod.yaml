@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-critical-workload
+  labels:
+    app: critical-node-workload
+    troubleshooting: production
+spec:
+  containers:
+  - name: app
+    image: nginx:1.25-alpine
+    ports:
+    - containerPort: 80

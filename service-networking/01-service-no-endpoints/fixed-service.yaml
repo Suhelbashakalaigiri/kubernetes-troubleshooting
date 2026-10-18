@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-no-endpoints
+  labels:
+    app: backend-api
+    troubleshooting: networking
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend-api
+  template:
+    metadata:
+      labels:
+        app: backend-api
+    spec:
+      containers:
+      - name: web
+        image: nginx:1.25-alpine
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-no-endpoints
+  labels:
+    troubleshooting: networking
+spec:
+  type: ClusterIP
+  selector:
+    app: backend-api
+  ports:
+  - port: 80
+    targetPort: 80

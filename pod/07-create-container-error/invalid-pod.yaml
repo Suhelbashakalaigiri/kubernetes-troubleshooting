@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-create-container-error
+  labels:
+    app: create-container-error-demo
+    troubleshooting: pod
+spec:
+  containers:
+  - name: web
+    image: nginx:1.25-alpine
+    command: ["/entrypoint-custom-nonexistent.sh"]

@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-failed-scheduling
+  labels:
+    app: failed-scheduling-demo
+    troubleshooting: pod
+spec:
+  containers:
+  - name: heavy-app
+    image: nginx:1.25-alpine
+    resources:
+      requests:
+        cpu: "50m"
+        memory: "64Mi"
+      limits:
+        cpu: "200m"
+        memory: "128Mi"

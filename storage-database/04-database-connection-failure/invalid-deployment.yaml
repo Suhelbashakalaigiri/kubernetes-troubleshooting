@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-db-conn-failure
+  labels:
+    app: db-conn-demo
+    troubleshooting: storage
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db-conn-demo
+  template:
+    metadata:
+      labels:
+        app: db-conn-demo
+    spec:
+      containers:
+      - name: app
+        image: busybox:1.36
+        command:
+        - sh
+        - -c
+        - |
+          echo "Connecting to primary database at mysql-db.invalid.internal:3306..."
+          nc -z -w 3 mysql-db.invalid.internal 3306
+          if [ $? -ne 0 ]; then
+            echo "FATAL: Database connection timed out or host unreachable!" >&2
+            exit 1
+          fi
+          echo "Connected successfully."
+          sleep 3600

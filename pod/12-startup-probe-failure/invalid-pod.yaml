@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-startup-probe-failure
+  labels:
+    app: startup-probe-demo
+    troubleshooting: pod
+spec:
+  containers:
+  - name: slow-app
+    image: busybox:1.36
+    command: ["sh", "-c", "echo 'Application bootstrapping...'; sleep 15; touch /tmp/started; echo 'Application online'; sleep 3600"]
+    startupProbe:
+      exec:
+        command:
+        - cat
+        - /tmp/started
+      initialDelaySeconds: 1
+      periodSeconds: 2
+      failureThreshold: 2

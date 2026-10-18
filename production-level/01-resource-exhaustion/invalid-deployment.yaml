@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-resource-exhaustion
+  labels:
+    app: resource-exhaustion-demo
+    troubleshooting: production
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: resource-exhaustion-demo
+  template:
+    metadata:
+      labels:
+        app: resource-exhaustion-demo
+    spec:
+      containers:
+      - name: worker
+        image: nginx:1.25-alpine
+        resources:
+          requests:
+            cpu: "3"
+            memory: "3Gi"

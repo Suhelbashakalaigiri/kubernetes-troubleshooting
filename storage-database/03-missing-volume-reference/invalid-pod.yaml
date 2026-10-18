@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-missing-volume-ref
+  labels:
+    app: missing-vol-demo
+    troubleshooting: storage
+spec:
+  containers:
+  - name: app
+    image: nginx:1.25-alpine
+    volumeMounts:
+    - name: data-volume
+      mountPath: /var/data
+  volumes:
+  - name: storage-volume-mismatched
+    emptyDir: {}

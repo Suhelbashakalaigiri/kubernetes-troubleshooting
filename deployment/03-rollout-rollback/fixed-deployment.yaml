@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-rollout-rollback
+  labels:
+    app: rollout-rollback-demo
+    troubleshooting: deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: rollout-rollback-demo
+  template:
+    metadata:
+      labels:
+        app: rollout-rollback-demo
+    spec:
+      containers:
+      - name: web
+        image: nginx:1.24-alpine
+        ports:
+        - containerPort: 80

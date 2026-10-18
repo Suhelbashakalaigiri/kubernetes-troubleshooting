@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-mysql-ephemeral
+  labels:
+    app: mysql-ephemeral-demo
+    troubleshooting: storage
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql-ephemeral-demo
+  template:
+    metadata:
+      labels:
+        app: mysql-ephemeral-demo
+    spec:
+      containers:
+      - name: mysql
+        image: busybox:1.36
+        # Demonstrates storing state in ephemeral container rootfs instead of a persistent volume
+        command:
+        - sh
+        - -c
+        - |
+          echo "Simulated database running..."
+          echo "Records stored in /var/lib/mysql: $(cat /var/lib/mysql/data.txt 2>/dev/null || echo 'NONE (DATA LOST)')"
+          sleep 3600

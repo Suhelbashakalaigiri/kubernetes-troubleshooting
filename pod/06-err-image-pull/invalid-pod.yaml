@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-err-image-pull
+  labels:
+    app: err-image-pull-demo
+    troubleshooting: pod
+spec:
+  containers:
+  - name: app
+    image: non-existent-registry.invalid/demo/backend:v1.0.0
+    imagePullPolicy: Always

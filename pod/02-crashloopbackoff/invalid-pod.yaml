@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-crashloopbackoff
+  labels:
+    app: crashloopbackoff-demo
+    troubleshooting: pod
+spec:
+  containers:
+  - name: worker
+    image: busybox:1.36
+    command: ["sh", "-c", "echo 'Starting worker service...'; echo 'Fatal error: configuration file missing'; exit 1"]

@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-replicas-not-ready
+  labels:
+    app: replicas-not-ready-demo
+    troubleshooting: deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: replicas-not-ready-demo
+  template:
+    metadata:
+      labels:
+        app: replicas-not-ready-demo
+    spec:
+      containers:
+      - name: web
+        image: nginx:1.25-alpine
+        ports:
+        - containerPort: 80
+        readinessProbe:
+          httpGet:
+            path: /health-check
+            port: 80
+          initialDelaySeconds: 2
+          periodSeconds: 3
+          failureThreshold: 2

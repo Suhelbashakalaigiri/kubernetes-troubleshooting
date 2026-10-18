@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-unexpected-rollout
+  labels:
+    app: unexpected-rollout-demo
+    troubleshooting: deployment
+spec:
+  replicas: 4
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 100%
+      maxSurge: 0
+  selector:
+    matchLabels:
+      app: unexpected-rollout-demo
+  template:
+    metadata:
+      labels:
+        app: unexpected-rollout-demo
+    spec:
+      containers:
+      - name: web
+        image: nginx:1.24-alpine
+        ports:
+        - containerPort: 80

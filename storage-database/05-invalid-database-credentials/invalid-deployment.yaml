@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-db-auth-failure
+  labels:
+    app: db-auth-demo
+    troubleshooting: storage
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db-auth-demo
+  template:
+    metadata:
+      labels:
+        app: db-auth-demo
+    spec:
+      containers:
+      - name: app
+        image: busybox:1.36
+        env:
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-credentials
+              key: DB_PASSWORD
+        command:
+        - sh
+        - -c
+        - |
+          echo "Authenticating against database..."
+          if [ "$DB_PASSWORD" != "correct-production-secret" ]; then
+            echo "ERROR 1045 (28000): Access denied for user 'app_user'@'%' (using password: YES)" >&2
+            exit 1
+          fi
+          echo "Authentication successful. Database session established."
+          sleep 3600

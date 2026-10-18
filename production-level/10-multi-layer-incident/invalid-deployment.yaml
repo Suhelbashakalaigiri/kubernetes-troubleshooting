@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-multi-layer
+  labels:
+    app: incident-backend
+    troubleshooting: production
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: incident-backend
+  template:
+    metadata:
+      labels:
+        app: incident-backend
+    spec:
+      containers:
+      - name: web
+        image: nginx:1.25-alpine
+        ports:
+        - containerPort: 80
+        # Layer 1 failure: Readiness probe queries non-existent /health-check (404)
+        readinessProbe:
+          httpGet:
+            path: /health-check
+            port: 80
+          initialDelaySeconds: 2
+          periodSeconds: 2
+          failureThreshold: 2

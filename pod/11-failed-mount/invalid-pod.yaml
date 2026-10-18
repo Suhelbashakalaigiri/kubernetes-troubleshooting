@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-failed-mount
+  labels:
+    app: failed-mount-demo
+    troubleshooting: pod
+spec:
+  containers:
+  - name: app
+    image: nginx:1.25-alpine
+    ports:
+    - containerPort: 80
+    volumeMounts:
+    - name: missing-storage
+      mountPath: /var/data
+  volumes:
+  - name: missing-storage
+    persistentVolumeClaim:
+      claimName: non-existent-pvc

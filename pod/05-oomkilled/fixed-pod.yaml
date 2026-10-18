@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-oomkilled
+  labels:
+    app: oomkilled-demo
+    troubleshooting: pod
+spec:
+  restartPolicy: Never
+  containers:
+  - name: memory-consumer
+    image: busybox:1.36
+    command: ["sh", "-c", "echo 'Allocating memory safely within limit...'; head -c 10M /dev/zero > /dev/shm/safe.bin; echo 'Allocation successful'; sleep 3600"]
+    resources:
+      limits:
+        memory: "64Mi"
+      requests:
+        memory: "32Mi"

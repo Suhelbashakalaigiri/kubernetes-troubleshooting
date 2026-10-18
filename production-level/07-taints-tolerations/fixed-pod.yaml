@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-taint-blocked
+  labels:
+    app: taint-demo
+    troubleshooting: production
+spec:
+  nodeSelector:
+    kubernetes.io/hostname: minikube
+  # Best Practice: Matching toleration allows pod to schedule on tainted node
+  tolerations:
+  - key: "dedicated"
+    operator: "Equal"
+    value: "special-workload"
+    effect: "NoSchedule"
+  containers:
+  - name: web
+    image: nginx:1.25-alpine
+    ports:
+    - containerPort: 80

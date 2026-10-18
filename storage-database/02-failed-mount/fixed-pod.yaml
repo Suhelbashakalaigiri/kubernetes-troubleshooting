@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-broken-mount
+  labels:
+    troubleshooting: storage
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: standard
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-storage-failed-mount
+  labels:
+    app: failed-mount-demo
+    troubleshooting: storage
+spec:
+  containers:
+  - name: app
+    image: nginx:1.25-alpine
+    volumeMounts:
+    - name: data-store
+      mountPath: /var/data
+  volumes:
+  - name: data-store
+    persistentVolumeClaim:
+      claimName: pvc-broken-mount

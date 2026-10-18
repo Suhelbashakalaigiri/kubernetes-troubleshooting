@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-config-refresh
+  labels:
+    app: config-refresh-demo
+    troubleshooting: config
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: config-refresh-demo
+  template:
+    metadata:
+      labels:
+        app: config-refresh-demo
+    spec:
+      containers:
+      - name: app
+        image: busybox:1.36
+        # Demonstrates reading from a mounted ConfigMap volume which updates dynamically
+        command: ["sh", "-c", "while true; do echo "Volume mode: $(cat /etc/config/FEATURE_MODE)"; sleep 5; done"]
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/config
+      volumes:
+      - name: config-volume
+        configMap:
+          name: feature-flags

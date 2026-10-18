@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-warmup-outage
+  labels:
+    app: warmup-demo
+    troubleshooting: production
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: warmup-demo
+  template:
+    metadata:
+      labels:
+        app: warmup-demo
+    spec:
+      containers:
+      - name: web
+        image: busybox:1.36
+        # Simulates an application taking 8 seconds to initialize before serving traffic
+        command:
+        - sh
+        - -c
+        - |
+          echo "Bootstrapping server (warming up caches)..."
+          sleep 8
+          echo "Server online on port 80."
+          httpd -f -p 80
+        # Flawed: No readiness probe! Kubernetes considers container Ready the moment process starts!

@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-readiness-probe-failure
+  labels:
+    app: readiness-failure-demo
+    troubleshooting: pod
+spec:
+  containers:
+  - name: web
+    image: nginx:1.25-alpine
+    ports:
+    - containerPort: 80
+    readinessProbe:
+      httpGet:
+        path: /healthz
+        port: 80
+      initialDelaySeconds: 2
+      periodSeconds: 3
+      failureThreshold: 2

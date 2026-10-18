@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: audit-viewer-sa
+  labels:
+    troubleshooting: production
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: audit-viewer-role
+  labels:
+    troubleshooting: production
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  # Corrected: Grants get, list, and watch
+  verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: audit-viewer-binding
+  labels:
+    troubleshooting: production
+subjects:
+- kind: ServiceAccount
+  name: audit-viewer-sa
+roleRef:
+  kind: Role
+  name: audit-viewer-role
+  apiGroup: rbac.authorization.k8s.io

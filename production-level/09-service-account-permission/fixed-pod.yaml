@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: pod-reader-sa
+  labels:
+    troubleshooting: production
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pod-reader-role
+  labels:
+    troubleshooting: production
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: pod-reader-binding
+  labels:
+    troubleshooting: production
+subjects:
+- kind: ServiceAccount
+  name: pod-reader-sa
+roleRef:
+  kind: Role
+  name: pod-reader-role
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-api-reader
+  labels:
+    app: api-reader-demo
+    troubleshooting: production
+spec:
+  # Best Practice: Assigns dedicated ServiceAccount with explicit RBAC permissions
+  serviceAccountName: pod-reader-sa
+  containers:
+  - name: client
+    image: curlimages/curl:8.6.0
+    command:
+    - sh
+    - -c
+    - |
+      echo "Querying Kubernetes API for Pods..."
+      TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+      curl -s -k -H "Authorization: Bearer $TOKEN" https://kubernetes.default.svc/api/v1/namespaces/default/pods
+      sleep 3600

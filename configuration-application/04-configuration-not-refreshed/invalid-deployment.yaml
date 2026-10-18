@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-config-refresh
+  labels:
+    app: config-refresh-demo
+    troubleshooting: config
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: config-refresh-demo
+  template:
+    metadata:
+      labels:
+        app: config-refresh-demo
+    spec:
+      containers:
+      - name: app
+        image: busybox:1.36
+        command: ["sh", "-c", "while true; do echo "Current mode: $FEATURE_MODE"; sleep 5; done"]
+        env:
+        - name: FEATURE_MODE
+          valueFrom:
+            configMapKeyRef:
+              name: feature-flags
+              key: FEATURE_MODE

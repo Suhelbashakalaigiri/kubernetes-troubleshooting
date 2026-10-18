@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-port-mismatch
+  labels:
+    app: port-mismatch-demo
+    troubleshooting: networking
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: port-mismatch-demo
+  template:
+    metadata:
+      labels:
+        app: port-mismatch-demo
+    spec:
+      containers:
+      - name: web
+        image: nginx:1.25-alpine
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-port-mismatch
+  labels:
+    troubleshooting: networking
+spec:
+  type: ClusterIP
+  selector:
+    app: port-mismatch-demo
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80

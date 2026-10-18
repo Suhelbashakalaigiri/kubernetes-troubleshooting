@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-db-not-ready
+  labels:
+    app: db-not-ready-demo
+    troubleshooting: storage
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db-not-ready-demo
+  template:
+    metadata:
+      labels:
+        app: db-not-ready-demo
+    spec:
+      # Pattern: initContainers wait for database readiness before main app starts
+      initContainers:
+      - name: wait-for-db
+        image: busybox:1.36
+        command:
+        - sh
+        - -c
+        - |
+          echo "Waiting for database readiness..."
+          sleep 5
+          touch /tmp/db-ready-flag
+          echo "Database is ready."
+        volumeMounts:
+        - name: flag-volume
+          mountPath: /tmp
+      containers:
+      - name: app
+        image: busybox:1.36
+        volumeMounts:
+        - name: flag-volume
+          mountPath: /tmp
+        command:
+        - sh
+        - -c
+        - |
+          echo "Starting application..."
+          echo "Querying database..."
+          if [ ! -f /tmp/db-ready-flag ]; then
+            echo "FATAL: Database is not ready to accept connections!" >&2
+            exit 1
+          fi
+          echo "Application running."
+          sleep 3600
+      volumes:
+      - name: flag-volume
+        emptyDir: {}

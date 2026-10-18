@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-err-image-pull
+  labels:
+    app: err-image-pull-demo
+    troubleshooting: pod
+spec:
+  containers:
+  - name: app
+    image: nginx:1.25-alpine
+    imagePullPolicy: IfNotPresent
+    ports:
+    - containerPort: 80

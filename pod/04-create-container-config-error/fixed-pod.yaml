@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-database-config
+  labels:
+    app: config-error-demo
+    troubleshooting: pod
+data:
+  db_host: "postgres.internal.local"
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-create-container-config-error
+  labels:
+    app: config-error-demo
+    troubleshooting: pod
+spec:
+  containers:
+  - name: app
+    image: busybox:1.36
+    command: ["sh", "-c", "echo App running with database host: $DB_HOST; sleep 3600"]
+    env:
+    - name: DB_HOST
+      valueFrom:
+        configMapKeyRef:
+          name: app-database-config
+          key: db_host
