@@ -1,3 +1,4 @@
+
 apiVersion: v1
 kind: Pod
 metadata:
@@ -7,13 +8,11 @@ metadata:
     troubleshooting: pod
 spec:
   containers:
-  - name: app
-    image: nginx:1.25-alpine
-    ports:
-    - containerPort: 80
-    volumeMounts:
-    - name: app-storage
-      mountPath: /var/data
+    - name: nginx
+      image: nginx:1.25-alpine
+      volumeMounts:
+        - name: config-volume
+          mountPath: /var/config
   volumes:
-  - name: app-storage
-    emptyDir: {}
+    - name: config-volume
+      emptyDir: {}
