@@ -154,9 +154,9 @@ To access the Service from your local Windows web browser or PowerShell:
 
 ```powershell
 # Method 1: Port-forward directly to localhost:8080 on Windows
-kubectl port-forward service/svc-nodeport 8080:80
+kubectl port-forward service/svc-nodeport 8081:80
 ```
-Then browse to `http://localhost:8080` in Windows.
+Then browse to `http://localhost:8081` in Windows.
 
 ---
 
